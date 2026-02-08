@@ -1,50 +1,86 @@
-import sqlite3 
+import sqlite3
+import os
 
-#Nombre de la base de datos 
-DB_NAME = "chatbot_sol.db"
+DB_NAME = "banco_sol.db"
 
 def inicializar_db():
-    """Aqui si la tabla de usuarios no existe se va a crear"""
-
+    """Crea la tabla de usuarios con todos los campos necesarios"""
     conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor() 
-
-    #Aqui se va a crear la tabla con las siguiente columnas (ID, Nombre, Documento (Cedula/RIF) y tipo (V/E/J))
-    cursor.execute("""
+    cursor = conn.cursor()
+    
+    # IMPORTANTE: Aquí se define la estructura de la tabla
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS usuarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            documento TEXT UNIQUE NOT NULL,
             nombre TEXT NOT NULL,
-            tipo_documento TEXT NOT NULL
+            documento TEXT UNIQUE NOT NULL,
+            tipo_doc TEXT NOT NULL,
+            telefono TEXT,
+            email TEXT,
+            clave TEXT  
         )
-    """)
+    ''')
     conn.commit()
     conn.close()
 
-
-def registrar_usuario(nombre, documento, tipo):
-    "Uso try aqui para guardar un usuario nuevo. Me retornara True si salio bien."
-    
+def registrar_usuario(nombre, documento, tipo, telefono, email, clave):
+    """Guarda un nuevo usuario con TODOS sus datos de contacto"""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
     try:
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO usuarios (nombre, documento, tipo_documento) VALUES (?, ?, ?)", 
-                       (nombre, documento, tipo))
+        
+        cursor.execute(
+            "INSERT INTO usuarios (nombre, documento, tipo_doc, telefono, email, clave) VALUES (?, ?, ?, ?, ?, ?)", 
+            (nombre, documento, tipo, telefono, email, clave)
+        )
         conn.commit()
         return True
-    
     except sqlite3.IntegrityError:
-        #Esto va a ocurrir si el documento ya fue registrado para evitar que se repitan la cedula.
         return False
     finally:
         conn.close()
 
 def buscar_usuario(documento):
-    #Esta funcion lo que va a ser es buscar si el usuario existe por su documento
+    """Busca un usuario y devuelve sus datos"""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
+    
+    cursor.execute("SELECT nombre, documento, telefono, email FROM usuarios WHERE documento = ?", (documento,))
+    usuario = cursor.fetchone()
+    
+    conn.close()
+    return usuario 
 
-    cursor.execute("SELECT nombre FROM usuarios WHERE documento = ?", (documento,))
+def obtener_clave(documento):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("SELECT clave FROM usuarios WHERE documento = ?", (documento,))
     resultado = cursor.fetchone()
     conn.close()
-    return resultado
+    if resultado:
+        return resultado [0] #Devuelve solo el texto de la clave
+    return None
+
+def actualizar_contacto(documento, nuevo_telefono=None, nuevo_email=None):
+    """Permite editar contacto"""
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    
+    if nuevo_telefono:
+        cursor.execute("UPDATE usuarios SET telefono = ? WHERE documento = ?", (nuevo_telefono, documento))
+    
+    if nuevo_email:
+        cursor.execute("UPDATE usuarios SET email = ? WHERE documento = ?", (nuevo_email, documento))
+        
+    conn.commit()
+    conn.close()
+    return True
+
+def actualizar_clave(documento, nueva_clave):
+    #Actualiza la clave del usuario
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("UPDATE usuarios SET clave = ? WHERE documento = ?", (nueva_clave, documento))
+    conn.commit()
+    conn.close()
+    return True
