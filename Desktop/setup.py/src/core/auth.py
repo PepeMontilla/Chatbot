@@ -26,11 +26,11 @@ def validar_identificador(texto_input):
     #Validaciones especificas dependiendo del tipo del documento
 
     if tipo_detectado == "J-":
-        if len(numero_doc) != 10:
+        if len(numero_doc) > 10:
             return False, None, None, f"Error!: El RIF debe tener 10 digitos (escribiste {len(numero_doc)})"
         
     else:
-        if not (7 <= len(numero_doc) <= 9):
+        if not (7 <= len(numero_doc) <= 8):
             return False, None, None, "Error! la decula debe de tener entre 7 y 9 digitos"
             
     return True, tipo_detectado.replace("-", ""), numero_doc, "OK"

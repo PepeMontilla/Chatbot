@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Banco Sol - Acceso</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: black; margin: 0; }
+        .login-card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; width: 300px; }
+        h1 { color: #d35400; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { width: 100%; padding: 10px; background-color: #d35400; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #e67e22; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p style="color: red; font-weight: bold;">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h1>☀️ Banco Sol</h1>
+        <h3>Bienvenido</h3>
+        
+        <form action="/" method="POST">
+            <input type="text" name="usuario" placeholder="Cédula" required>
+            <input type="password" name="clave" placeholder="Contraseña" required>
+            <button type="submit">Ingresar</button>
+        </form>
+
+        <br><br>
+        <a href="/registro" style="color: #555; text-decoration: none;">
+            ¿No tienes cuenta? <b>Regístrate aquí</b>
+        </a>
+
+    </div>
+
+</body>
+</html>>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro - Banco Sol</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #000; color: white; margin: 0;}
+        .card { background: white; color: black; padding: 2rem; border-radius: 10px; width: 350px; text-align: center; }
+        h1 { color: #d35400; margin-bottom: 20px; }
+        input, select { width: 90%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { width: 100%; padding: 10px; background-color: #d35400; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 15px;}
+        button:hover { background-color: #e67e22; }
+        .link { display: block; margin-top: 15px; color: #555; text-decoration: none; font-size: 0.9em; }
+        .error { color: red; font-size: 0.9em; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>📝 Nuevo Cliente</h1>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="error">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="/registro" method="POST">
+            <input type="text" name="nombre" placeholder="Nombre Completo" required>
+            
+            <div style="display: flex; gap: 5px; justify-content: center; width: 96%; margin: 0 auto;">
+                <select name="tipo" style="width: 30%;">
+                    <option value="V">V</option>
+                    <option value="E">E</option>
+                    <option value="J">J</option>
+                </select>
+                <input type="number" name="cedula" placeholder="Cédula" style="width: 70%;" required>
+            </div>
+
+            <input type="text" name="telefono" placeholder="Teléfono (0412...)" required>
+            <input type="email" name="email" placeholder="Correo Electrónico" required>
+            <input type="password" name="clave" placeholder="Crea tu Clave (min 6 caracteres)" required>
+            
+            <button type="submit">Registrarme</button>
+        </form>
+        
+        <a href="/" class="link">¿Ya tienes cuenta? <b>Inicia Sesión</b></a>
+    </div>
+</body>
+</html>
